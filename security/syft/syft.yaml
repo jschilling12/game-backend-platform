@@ -2,10 +2,8 @@
 # https://github.com/anchore/syft
 
 # Output format: spdx-json | cyclonedx-json | syft-json | table
-output: spdx-json
-
-# File to write the SBOM to (relative to project root when run from CI)
-file: sbom.spdx.json
+output:
+  - spdx-json
 
 # Scope: squashed (default) | all-layers
 scope: squashed
