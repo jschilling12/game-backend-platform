@@ -9,6 +9,10 @@ on:
     # Run nightly at 02:00 UTC
     - cron: "0 2 * * *"
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   trivy-fs:
     name: Trivy — Filesystem Scan
@@ -26,7 +30,8 @@ jobs:
           output: trivy-results.sarif
 
       - name: Upload SARIF to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: trivy-results.sarif
 
@@ -58,7 +63,8 @@ jobs:
           output: trivy-image-${{ matrix.service }}.sarif
 
       - name: Upload SARIF
-        uses: github/codeql-action/upload-sarif@v3
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: trivy-image-${{ matrix.service }}.sarif
 
@@ -88,7 +94,7 @@ jobs:
           output-file: sbom-${{ matrix.service }}.spdx.json
 
       - name: Upload SBOM artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: sbom-${{ matrix.service }}
           path: sbom-${{ matrix.service }}.spdx.json
